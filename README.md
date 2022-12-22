@@ -1,4 +1,4 @@
-# Redkite Engineering Refresher
+# Redkite Engineering Accelerator
 
 ## Introduction
 
