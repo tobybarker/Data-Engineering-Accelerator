@@ -9,7 +9,7 @@
 
 ## Getting Started
 
-1. Clone this repo onto your local machine
+1. Clone your team's repo onto your local machine
 2. Install Docker on your local machine
 3. Create the docker image by running either the [Powershell build file](./.docker/Powershell/build-redkite-refresher-pyspark-image.ps1) or the [Bash build file](./.docker/Bash/build-pyspark-pipelines-image.sh)
 4. With the image created, spin up a container using either the [Powershell container file](./.docker/Powershell/start-redkite-refresher-pyspark-container.ps1) or the [Bash container file](./.docker/Bash/start-pyspark-pipelines-container.sh)
