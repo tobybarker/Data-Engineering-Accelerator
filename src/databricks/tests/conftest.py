@@ -2,5 +2,5 @@
 
 ''' Spark
 '''
-from tests.fixtures.fixture_spark import spark
+from src.databricks.tests.fixtures.fixture_spark import spark
 

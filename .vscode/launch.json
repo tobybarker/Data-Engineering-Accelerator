@@ -12,9 +12,13 @@
             "console": "integratedTerminal",
             "args": [
                 "--job_path",
-                "example_job.py",
-                "--example_arg",
-                "hello world"
+                "target/FactSales.py",
+                "--file_path",
+                "C:/Users/TobyBarker/Documents/Data_Engineering_Accelerator/src/databricks/sample_lake/Cleansed/DataFeed=Sales/schemaVersion=1/SubmissionYear=2023/SubmissionMonth=10/SubmissionDay=30",
+                "--cleansed_date_format",
+                "dd/MM/yyyy HH:mm",
+                "--workspace_folder",
+                "C:/Users/TobyBarker/Documents/Data_Engineering_Accelerator"
             ],
             "justMyCode": true
         },
@@ -25,7 +29,7 @@
             "module": "pytest",
             "args": [
                 "${workspaceFolder}/src/databricks/tests",
-                "-v"
+                "-vv"
             ],
             "envFile": "${workspaceFolder}/.env"
         }
