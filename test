@@ -1,0 +1,35 @@
+import sys
+sys.path.append('C:/Users/TobyBarker/Documents/Data_Engineering_Accelerator/src/databricks')
+
+from pyspark.sql.functions import *
+from datetime import datetime
+from utilities.spark_session import spark
+from schemas.cleansed.product_category import product_category_schema
+from utilities.helpers.transform_helpers import read_csv_to_df
+from utilities.helpers.transform_helpers import read_parquet_to_df
+from utilities.helpers.transform_helpers import apply_schema_to_df
+from tests.fixtures.fixture_cleansed_product_category import input_df_cleansed_product_category, expected_df_cleansed_product_category
+
+
+product_category = read_parquet_to_df(spark, "C:/Users/TobyBarker/Documents/Data_Engineering_Accelerator/src/databricks/sample_lake/Cleansed/DataFeed=ProductCategory/schemaVersion=1/SubmissionYear=2024/SubmissionMonth=4/SubmissionDay=4/SubmissionHour=9/SubmissionMinute=39/SubmissionSecond=40")
+product = read_parquet_to_df(spark, "C:/Users/TobyBarker/Documents/Data_Engineering_Accelerator/src/databricks/sample_lake/Cleansed/DataFeed=Product/schemaVersion=1/SubmissionYear=2024")
+
+
+#product.show(vertical=True)
+
+def transform(df):
+    '''
+    This function transforms the ProductCategory source data based off the business requirements,
+    preparing it for the Cleansed layer
+    '''
+    df = apply_schema_to_df(df, product_category_schema)
+    string_columns = [col_name for col_name, col_type in df.dtypes if col_type == "string"]
+    for col_name in string_columns:
+        df = df.withColumn(col_name, regexp_replace(col_name, "/t", " "))
+        df = df.withColumn(col_name, trim(initcap(col(col_name))))
+    return df
+
+
+input_df_cleansed_product_category: DataFrame
+DataFrame = transform(input_df_cleansed_product_category)
+DataFrame.show()
