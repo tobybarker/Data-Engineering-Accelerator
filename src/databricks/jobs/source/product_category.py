@@ -1,72 +1,52 @@
+import sys
+sys.path.append('C:/Users/TobyBarker/Documents/Data_Engineering_Accelerator/src/databricks')
 from pyspark.sql.functions import *
-from pyspark.sql import SparkSession
+from datetime import datetime
+from utilities.spark_session import spark
 from schemas.cleansed.product_category import product_category_schema
-spark = SparkSession.builder.appName("DataEngineerAccelerator").getOrCreate()
+from utilities.helpers.transform_helpers import read_csv_to_df
+from utilities.helpers.transform_helpers import apply_schema_to_df
 
-def read_csv_to_df(file_path):
-    '''Reads csv file to a dataframe
+#Constants
+file_path = "C:/Users/TobyBarker/Documents/Data_Engineering_Accelerator/src/databricks/sample_lake/Sourced/SystemA/ProductCategory/date=20220606/ProductCategory.csv"
+workspace_folder = "C:/Users/TobyBarker/Documents/Data_Engineering_Accelerator/"
+schemaVersion = 1
+data_feed = "ProductCategory"
 
-    Args:
-        file_path (str)
+def transform(df):
     '''
-    df = spark.read.csv(file_path, header="True", schema=product_category_schema)
-    return df
-
-def transform(file_path):
-    '''This function transforms the ProductCategory source data based off the business requirements,
+    This function transforms the ProductCategory source data based off the business requirements,
     preparing it for the Cleansed layer
     '''
-    df = read_csv_to_df(file_path)
-    # Convert necessary columns to StringType
+    df = apply_schema_to_df(df, product_category_schema)
     string_columns = [col_name for col_name, col_type in df.dtypes if col_type == "string"]
     for col_name in string_columns:
-        df = df.withColumn(col_name, regexp_replace(col_name, "\\t", " "))
+        df = df.withColumn(col_name, regexp_replace(col(col_name), "\t", ""))
         df = df.withColumn(col_name, trim(initcap(col(col_name))))
     return df
 
-def execute(file_path, workspace_folder):
+def write(df):
     '''This function creates the Cleansed file path, transforms the source file using the transform function 
     and writes it to the Cleansed folder in parquet format.
 
     Args:
-        file_path (str)
-        workspace_folder (str): the root directory you are working from
+        df
     '''
     # Retrieve folder names to write the data too
-    current_date_df = spark.range(1).select(to_timestamp(current_timestamp()).alias("current_date"))
-    year_df = current_date_df.select(year("current_date").alias("submission_year"))
-    month_df = current_date_df.select(month("current_date").alias("submission_month"))
-    day_df = current_date_df.select(day("current_date").alias("submission_day"))
-    hour_df = current_date_df.select(hour("current_date").alias("submission_hour"))
-    minute_df = current_date_df.select(minute("current_date").alias("submission_minute"))
-    second_df = current_date_df.select(second("current_date").alias("submission_second"))
 
-    submission_year = year_df.first()["submission_year"]
-    submission_month = month_df.first()["submission_month"]
-    submission_day = day_df.first()["submission_day"]
-    submission_hour = hour_df.first()["submission_hour"]
-    submission_minute = minute_df.first()["submission_minute"]
-    submission_second = second_df.first()["submission_second"]
+    current_datetime = datetime.now()
+    submission_year = current_datetime.year
+    submission_month = current_datetime.month
+    submission_day = current_datetime.day
+    submission_hour = current_datetime.hour
+    submission_minute = current_datetime.minute
+    submission_second = current_datetime.second
 
-    df = transform(file_path)
-    data_feed = df.withColumn("sourcefile",input_file_name())
-    data_feed = data_feed.withColumn("sourcefile", substring_index("sourcefile","/", -1))
-    data_feed = data_feed.withColumn("sourcefile", split(col("sourcefile"), "\\.")[0]).select("sourcefile").distinct()
-    data_feed = data_feed.withColumn("sourcefile", split(col("sourcefile"), "%")[0]).select("sourcefile").distinct()
-    data_feed = data_feed.first()["sourcefile"]
-
-    cleansed_path = f"{workspace_folder}/src/databricks/sample_lake/Cleansed/DataFeed={data_feed}/schemaVersion=1/SubmissionYear={submission_year}/SubmissionMonth={submission_month}/SubmissionDay={submission_day}/SubmissionHour={submission_hour}/SubmissionMinute={submission_minute}/SubmissionSecond={submission_second}"
+    cleansed_path = f"{workspace_folder}/src/databricks/sample_lake/Cleansed/DataFeed={data_feed}/schemaVersion={schemaVersion}/SubmissionYear={submission_year}/SubmissionMonth={submission_month}/SubmissionDay={submission_day}/SubmissionHour={submission_hour}/SubmissionMinute={submission_minute}/SubmissionSecond={submission_second}"
     
     df.write.mode("overwrite").parquet(cleansed_path)
 
-def transform_test(df):
-    '''This function is the same as the transform function but adjusted to parse a df instead of file_path
-    as that is the input for the unit tests
-    '''
-    schema=product_category_schema
-    df = spark.createDataFrame(df.rdd, schema=schema)
-    string_columns = [col_name for col_name, col_type in df.dtypes if col_type == "string"]
-    for col_name in string_columns:
-        df = df.withColumn(col_name, regexp_replace(col_name, "\\t", " "))
-        df = df.withColumn(col_name, trim(initcap(col(col_name))))
-    return df
+def execute():
+    input_df = read_csv_to_df(spark, file_path)
+    transformed_df = transform(input_df)
+    write(transformed_df)
