@@ -7,7 +7,7 @@ from schemas.cleansed.product_category import product_category_schema
 from utilities.helpers.transform_helpers import read_csv_to_df
 from utilities.helpers.transform_helpers import apply_schema_to_df
 
-#Constants
+#Variables
 file_path = "C:/Users/TobyBarker/Documents/Data_Engineering_Accelerator/src/databricks/sample_lake/Sourced/SystemA/ProductCategory/date=20220606/ProductCategory.csv"
 workspace_folder = "C:/Users/TobyBarker/Documents/Data_Engineering_Accelerator/"
 schemaVersion = 1
