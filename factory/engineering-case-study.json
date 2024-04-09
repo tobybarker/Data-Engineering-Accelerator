@@ -1,0 +1,9 @@
+{
+	"name": "engineering-case-study",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "37030d75-c43d-46fc-a5a1-6e7decd5a7e9",
+		"tenantId": "9df23587-51b3-4961-ac6d-8111b91e86f9"
+	}
+}
