@@ -1,22 +1,5 @@
 from pyspark.sql.functions import *
 
-def read_csv_to_df(spark, file_path):
-    '''Reads csv file to a dataframe
-
-    Args:
-        file_path (str)
-    '''
-    df = spark.read.csv(file_path, header="True")
-    return df
-
-def read_parquet_to_df(spark, file_path):
-    '''Reads parquet file to a dataframe
-    Args:
-        file_path (string)
-    '''
-    df = spark.read.parquet(file_path, header="True")
-    return df
-
 def apply_schema_to_df(df, schema):
     df_cols = df.columns
     for i in range(len(df_cols)):
