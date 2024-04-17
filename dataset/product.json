@@ -1,0 +1,101 @@
+{
+	"name": "product",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Product.csv",
+				"folderPath": "Sourced/SystemA/Product/date=20220606",
+				"fileSystem": "casestudy"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ProductID",
+				"type": "String"
+			},
+			{
+				"name": "ModelName",
+				"type": "String"
+			},
+			{
+				"name": "ProductName",
+				"type": "String"
+			},
+			{
+				"name": "ProductColor",
+				"type": "String"
+			},
+			{
+				"name": "Size",
+				"type": "String"
+			},
+			{
+				"name": "ProductWeight",
+				"type": "String"
+			},
+			{
+				"name": "UniqueProductNumber",
+				"type": "String"
+			},
+			{
+				"name": "ProductCategoryID",
+				"type": "String"
+			},
+			{
+				"name": "StandardCost",
+				"type": "String"
+			},
+			{
+				"name": "ListPrice",
+				"type": "String"
+			},
+			{
+				"name": "ProductLine",
+				"type": "String"
+			},
+			{
+				"name": "Class",
+				"type": "String"
+			},
+			{
+				"name": "Style",
+				"type": "String"
+			},
+			{
+				"name": "ProductMakeFlag",
+				"type": "String"
+			},
+			{
+				"name": "ProductFinishedGoodsFlag",
+				"type": "String"
+			},
+			{
+				"name": "SellStartDate",
+				"type": "String"
+			},
+			{
+				"name": "SellEndDate",
+				"type": "String"
+			},
+			{
+				"name": "DiscontinuedDate",
+				"type": "String"
+			},
+			{
+				"name": "ModifiedDate",
+				"type": "String"
+			}
+		]
+	}
+}
